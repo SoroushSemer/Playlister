@@ -258,13 +258,18 @@ function GlobalStoreContextProvider(props) {
       payload: {},
     });
     tps.clearAllTransactions();
-    history.push("/");
+    // history.push("/");
   };
 
   // THIS FUNCTION CREATES A NEW LIST
   store.createNewList = async function () {
     let newListName = "Untitled" + store.newListCounter;
-    const response = await api.createPlaylist(newListName, [], auth.user.email);
+    const response = await api.createPlaylist(
+      newListName,
+      [],
+      auth.user.email,
+      auth.user
+    );
     console.log("createNewList response: " + response);
     if (response.status === 201) {
       tps.clearAllTransactions();
@@ -273,9 +278,9 @@ function GlobalStoreContextProvider(props) {
         type: GlobalStoreActionType.CREATE_NEW_LIST,
         payload: newList,
       });
-
+      store.loadIdNamePairs();
       // IF IT'S A VALID LIST THEN LET'S START EDITING IT
-      history.push("/playlist/" + newList._id);
+      // history.push("/playlist/" + newList._id);
     } else {
       console.log("API FAILED TO CREATE A NEW LIST");
     }
@@ -377,7 +382,7 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.SET_CURRENT_LIST,
             payload: playlist,
           });
-          history.push("/playlist/" + playlist._id);
+          // history.push("/playlist/" + playlist._id);
         }
       }
     }

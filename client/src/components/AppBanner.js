@@ -63,10 +63,12 @@ export default function AppBanner() {
   const loggedInMenu = (
     <Menu
       anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
+      // anchorOrigin={
+      //   {
+      //     // vertical: "top",
+      //     // horizontal: "right",
+      //   }
+      // }
       id={menuId}
       keepMounted
       transformOrigin={{
@@ -80,40 +82,54 @@ export default function AppBanner() {
     </Menu>
   );
 
-  let editToolbar = "";
   let menu = loggedOutMenu;
   if (auth.loggedIn) {
     menu = loggedInMenu;
-    if (store.currentList) {
-      editToolbar = <EditToolbar />;
-    }
   }
 
   function getAccountMenu(loggedIn) {
     let userInitials = auth.getUserInitials();
     console.log("userInitials: " + userInitials);
-    if (loggedIn) return <div>{userInitials}</div>;
-    else return <AccountCircle />;
+    if (loggedIn)
+      return (
+        <div
+          style={{
+            border: "5px solid black",
+            borderRadius: "50%",
+            width: "7vh",
+            height: "7vh",
+            verticalAlign: "center",
+            fontSize: "4vh",
+            backgroundColor: "#f00",
+          }}
+        >
+          {userInitials}
+        </div>
+      );
+    else return <AccountCircle style={{ fontSize: "6vh" }} />;
   }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar style={{ background: "#aaa" }}>
           <Typography
             variant="h4"
             noWrap
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            <Link style={{ textDecoration: "none", color: "white" }} to="/">
-              ⌂
+            <Link to="/">
+              <img
+                src="/logo.png"
+                style={{ height: "auto", maxHeight: "9vh" }}
+              ></img>
             </Link>
           </Typography>
-          <Box sx={{ flexGrow: 1 }}>{editToolbar}</Box>
+
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
-              size="large"
+              size="xl"
               edge="end"
               aria-label="account of current user"
               aria-controls={menuId}
