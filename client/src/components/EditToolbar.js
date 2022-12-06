@@ -16,7 +16,7 @@ function EditToolbar() {
   const { store } = useContext(GlobalStoreContext);
 
   function handlePublish() {
-    store.addNewSong();
+    store.publishList();
   }
   function handleUndo() {
     store.undo();
@@ -25,7 +25,7 @@ function EditToolbar() {
     store.redo();
   }
   function handleDuplicate() {
-    store.closeCurrentList();
+    store.duplicateList();
   }
 
   async function handleDeleteList(event, id) {
@@ -45,37 +45,45 @@ function EditToolbar() {
         justifyContent: "space-between",
       }}
     >
+      {store.currentList.published != true ? (
+        <div>
+          <Button
+            disabled={!store.canUndo()}
+            id="undo-button"
+            onClick={handleUndo}
+            variant="contained"
+            style={{ marginRight: "5px" }}
+            size="large"
+          >
+            Undo
+          </Button>
+          <Button
+            disabled={!store.canRedo()}
+            id="redo-button"
+            onClick={handleRedo}
+            variant="contained"
+            size="large"
+          >
+            Redo
+          </Button>
+        </div>
+      ) : (
+        <div></div>
+      )}
       <div>
-        <Button
-          disabled={!store.canUndo()}
-          id="undo-button"
-          onClick={handleUndo}
-          variant="contained"
-          style={{ marginRight: "5px" }}
-          size="large"
-        >
-          Undo
-        </Button>
-        <Button
-          disabled={!store.canRedo()}
-          id="redo-button"
-          onClick={handleRedo}
-          variant="contained"
-          size="large"
-        >
-          Redo
-        </Button>
-      </div>
-      <div>
-        <Button
-          id="publish-button"
-          onClick={handlePublish}
-          variant="contained"
-          style={{ marginRight: "5px" }}
-          size="large"
-        >
-          Publish
-        </Button>
+        {store.currentList.published != true ? (
+          <Button
+            id="publish-button"
+            onClick={handlePublish}
+            variant="contained"
+            style={{ marginRight: "5px" }}
+            size="large"
+          >
+            Publish
+          </Button>
+        ) : (
+          <></>
+        )}
         <Button
           id="delete-button"
           onClick={(event) => {

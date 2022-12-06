@@ -25,7 +25,12 @@ export default function SideBar() {
         <Tab value={false} label="Player" />
         <Tab value={true} label="Comments" />
       </Tabs>
-      {value ? <div>comments</div> : <Player />}
+      <div style={value ? { display: "inline" } : { display: "none" }}>
+        comments
+      </div>
+      <div style={value ? { display: "none" } : { display: "inline" }}>
+        <Player />
+      </div>
     </Box>
   );
 }

@@ -112,7 +112,9 @@ export default function AppBanner() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar style={{ background: "#aaa" }}>
+        <Toolbar
+          style={{ background: "#aaa", justifyContent: "space-between" }}
+        >
           <Typography
             variant="h4"
             noWrap
@@ -127,7 +129,11 @@ export default function AppBanner() {
             </Link>
           </Typography>
 
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+            }}
+          >
             <IconButton
               size="xl"
               edge="end"

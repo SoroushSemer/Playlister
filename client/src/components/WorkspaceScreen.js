@@ -7,6 +7,7 @@ import AppBanner from "./AppBanner.js";
 import Statusbar from "./Statusbar.js";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
+import { ListItem } from "@mui/material";
 import { GlobalStoreContext } from "../store/index.js";
 import HomeNavBar from "./HomeNavBar.js";
 /*
@@ -40,26 +41,41 @@ function WorkspaceScreen(props) {
               bgcolor: "background.paper",
             }}
           >
-            {currentList.songs.map((song, index) => (
-              <SongCard
-                id={"playlist-song-" + index}
-                key={"playlist-song-" + index}
-                index={index}
-                song={song}
-              />
-            ))}
-            <div
-              id="add-song-card"
-              className="list-card unselected-list-card"
-              onClick={handleAddNewSong}
-              style={{
-                textAlign: "center",
-                fontWeight: "bolder",
-                fontSize: "25pt",
-              }}
-            >
-              +
-            </div>
+            {store.currentList.published != true
+              ? currentList.songs.map((song, index) => (
+                  <SongCard
+                    id={"playlist-song-" + index}
+                    key={"playlist-song-" + index}
+                    index={index}
+                    song={song}
+                  />
+                ))
+              : currentList.songs.map((song, index) => (
+                  <ListItem
+                    key={"playlist-song-" + index}
+                    style={{
+                      fontSize: "25pt",
+                    }}
+                  >
+                    {index + 1}. {song.title} by {song.artist}
+                  </ListItem>
+                ))}
+            {store.currentList.published != true ? (
+              <div
+                id="add-song-card"
+                className="list-card unselected-list-card"
+                onClick={handleAddNewSong}
+                style={{
+                  textAlign: "center",
+                  fontWeight: "bolder",
+                  fontSize: "25pt",
+                }}
+              >
+                +
+              </div>
+            ) : (
+              <></>
+            )}
           </List>
           {store.isEditSongModalOpen() ? (
             <MUIEditSongModal />

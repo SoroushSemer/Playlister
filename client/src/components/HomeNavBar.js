@@ -45,7 +45,6 @@ export default function HomeNavBar() {
       //   }
       // }
       id={menuId}
-      keepMounted
       transformOrigin={{
         vertical: "top",
         horizontal: "right",
@@ -53,11 +52,40 @@ export default function HomeNavBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem>Name (A-Z)</MenuItem>
-      <MenuItem>Publish Date (Newest)</MenuItem>
-      <MenuItem>Listens (High - Low)</MenuItem>
-      <MenuItem>Likes (High - Low)</MenuItem>
-      <MenuItem>Dislikes (High - Low)</MenuItem>
+      <MenuItem
+        onClick={() => store.setSort("NAME")}
+        style={store.currentSort == "NAME" ? { backgroundColor: "gray" } : {}}
+      >
+        Name (A-Z)
+      </MenuItem>
+      <MenuItem
+        onClick={() => store.setSort("DATE")}
+        style={store.currentSort == "DATE" ? { backgroundColor: "gray" } : {}}
+      >
+        Publish Date (Newest)
+      </MenuItem>
+      <MenuItem
+        onClick={() => store.setSort("LISTENS")}
+        style={
+          store.currentSort == "LISTENS" ? { backgroundColor: "gray" } : {}
+        }
+      >
+        Listens (High - Low)
+      </MenuItem>
+      <MenuItem
+        onClick={() => store.setSort("LIKES")}
+        style={store.currentSort == "LIKES" ? { backgroundColor: "gray" } : {}}
+      >
+        Likes (High - Low)
+      </MenuItem>
+      <MenuItem
+        onClick={() => store.setSort("DISLIKES")}
+        style={
+          store.currentSort == "DISLIKES" ? { backgroundColor: "gray" } : {}
+        }
+      >
+        Dislikes (High - Low)
+      </MenuItem>
     </Menu>
   );
 

@@ -10,6 +10,8 @@ import TextField from "@mui/material/TextField";
 import { Link } from "react-router-dom";
 import WorkspaceScreen from "./WorkspaceScreen";
 import EditToolbar from "./EditToolbar";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -58,11 +60,19 @@ function ListCard(props) {
   }
 
   async function handleOpenList(event) {
+    event.stopPropagation();
     console.log("Opening list");
+    if (
+      store.currentList != null &&
+      store.currentList._id != idNamePair._id &&
+      idNamePair.published
+    )
+      idNamePair.listens += 1;
     await handleLoadList(event, idNamePair._id);
     setListOpen(true);
   }
   function handleCloseList(event) {
+    event.stopPropagation();
     setListOpen(false);
     // setList({});
   }
@@ -86,7 +96,11 @@ function ListCard(props) {
   if (store.isListNameEditActive) {
     cardStatus = true;
   }
-
+  let cardColor = "#fff";
+  if (idNamePair.published) cardColor = "#aaf";
+  if (store.currentList != null && store.currentList._id == idNamePair._id) {
+    cardColor = "#dd0";
+  }
   let cardElement = (
     <ListItem
       id={idNamePair._id}
@@ -98,20 +112,81 @@ function ListCard(props) {
         flexDirection: "column",
         alignItems: "flex-start",
       }}
-      style={{ width: "100%", fontSize: "48pt", border: "1px solid black" }}
+      style={{
+        width: "100%",
+        fontSize: "48pt",
+        border: "1px solid black",
+        backgroundColor: cardColor,
+      }}
+      onClick={
+        store.currentList == null ||
+        !listOpen ||
+        store.currentList._id != idNamePair._id
+          ? () => {
+              if (
+                store.currentList != null &&
+                store.currentList._id != idNamePair._id &&
+                idNamePair.published
+              ) {
+                idNamePair.listens += 1;
+              }
+              store.setCurrentList(idNamePair._id);
+            }
+          : () => {}
+      }
       onDoubleClick={
         store.currentList == null ||
         !listOpen ||
         store.currentList._id != idNamePair._id
-          ? handleToggleEdit
+          ? idNamePair.published
+            ? () => {}
+            : handleToggleEdit
           : () => {}
       }
     >
       {/* <Box sx={{ p: 1, flexGrow: 1 }}> */}
-      <div style={{ fontSize: "30pt" }}>{idNamePair.name}</div>
-      <div style={{ fontSize: "20pt" }}>
-        By: <Link to="/">{idNamePair.ownerEmail}</Link>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "100%",
+        }}
+      >
+        <div>
+          <div style={{ fontSize: "30pt" }}>{idNamePair.name}</div>
+          <div style={{ fontSize: "20pt" }}>
+            By:{" "}
+            <Link to="/">
+              {idNamePair.owner.firstName + " " + idNamePair.owner.lastName}
+            </Link>
+          </div>
+        </div>
+        {idNamePair.published ? (
+          <div>
+            <IconButton>
+              <ThumbUpIcon style={{ fontSize: "48pt" }} />
+            </IconButton>
+            <span style={{ fontStyle: "normal", fontSize: "30pt" }}>
+              {idNamePair.likes}
+            </span>
+            <IconButton>
+              <ThumbDownIcon style={{ fontSize: "48pt", marginLeft: "2vh" }} />
+            </IconButton>
+            <span
+              style={{
+                fontStyle: "normal",
+                fontSize: "30pt",
+                marginRight: "2vh",
+              }}
+            >
+              {idNamePair.dislikes}
+            </span>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
+
       {store.currentList != null &&
       listOpen &&
       store.currentList._id == idNamePair._id ? (
@@ -127,22 +202,69 @@ function ListCard(props) {
       ) : (
         <></>
       )}
-      <Box sx={{ p: 1, alignSelf: "flex-end" }}>
-        {store.currentList != null &&
-        listOpen &&
-        store.currentList._id == idNamePair._id ? (
-          <IconButton onClick={handleCloseList} aria-label="edit">
-            <KeyboardDoubleArrowUpIcon style={{ fontSize: "48pt" }} />
-          </IconButton>
-        ) : (
-          <IconButton
-            onClick={(event) => handleOpenList(event)}
-            aria-label="openList"
-          >
-            <KeyboardDoubleArrowDownIcon style={{ fontSize: "48pt" }} />
-          </IconButton>
-        )}
-      </Box>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "100%",
+        }}
+      >
+        <div>
+          {idNamePair.published ? (
+            <span
+              style={{
+                fontStyle: "normal",
+                fontSize: "20pt",
+                marginRight: "2vh",
+              }}
+            >
+              Published:{" "}
+              <span style={{ color: "green" }}>
+                {new Date(idNamePair.publishDate).toLocaleDateString("en-us", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                })}
+              </span>
+            </span>
+          ) : (
+            <></>
+          )}
+        </div>
+        <div>
+          {idNamePair.published ? (
+            <span
+              style={{
+                fontStyle: "normal",
+                fontSize: "20pt",
+                marginRight: "2vh",
+              }}
+            >
+              Listens:{" "}
+              <span style={{ color: "red" }}>{idNamePair.listens}</span>
+            </span>
+          ) : (
+            <></>
+          )}
+
+          {store.currentList != null &&
+          listOpen &&
+          store.currentList._id == idNamePair._id ? (
+            <IconButton onClick={handleCloseList} aria-label="edit">
+              <KeyboardDoubleArrowUpIcon style={{ fontSize: "48pt" }} />
+            </IconButton>
+          ) : (
+            <IconButton
+              onClick={(event) => handleOpenList(event)}
+              aria-label="openList"
+            >
+              <KeyboardDoubleArrowDownIcon style={{ fontSize: "48pt" }} />
+            </IconButton>
+          )}
+        </div>
+      </div>
     </ListItem>
   );
 

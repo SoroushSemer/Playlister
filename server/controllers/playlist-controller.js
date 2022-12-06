@@ -101,6 +101,7 @@ getPlaylistById = async (req, res) => {
         console.log("req.userId: " + req.userId);
         if (user._id == req.userId) {
           console.log("correct user!");
+
           return res.status(200).json({ success: true, playlist: list });
         } else {
           console.log("incorrect user!");
@@ -135,11 +136,20 @@ getPlaylistPairs = async (req, res) => {
           let pairs = [];
           for (let key in playlists) {
             let list = playlists[key];
+            let liked = 0;
+            if (list.likeUsers.includes(user._id)) liked = 1;
+            else if (list.dislikeUsers.includes(user._id)) liked = -1;
             let pair = {
               _id: list._id,
               name: list.name,
               ownerEmail: list.ownerEmail,
-              owner: list.owner
+              owner: list.owner,
+              published: list.published,
+              likes: list.likes,
+              dislikes: list.dislikes,
+              publishDate: list.publishDate,
+              listens: list.listens,
+              liked: liked,
             };
             pairs.push(pair);
           }
@@ -195,7 +205,25 @@ updatePlaylist = async (req, res) => {
 
           list.name = body.playlist.name;
           list.songs = body.playlist.songs;
-          list.userId = body.playlist.userId;
+          if (body.playlist.newComment != undefined) {
+            list.comments.append(newComment);
+          }
+          if (body.playlist.published) {
+            list.published = body.playlist.published;
+            list.publishDate = body.playlist.publishDate;
+            list.comments = [];
+          }
+          if (body.playlist.like) {
+            list.likes += 1;
+            list.likeUsers.append(user._id);
+          }
+          if (body.playlist.dislike) {
+            list.dislike += 1;
+            list.dislikeUsers.append(user._id);
+          }
+          if (body.playlist.listens) {
+            list.listens = body.playlist.listens;
+          }
           list
             .save()
             .then(() => {
