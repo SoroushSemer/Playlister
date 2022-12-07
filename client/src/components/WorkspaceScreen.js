@@ -27,6 +27,7 @@ function WorkspaceScreen(props) {
   // } else {
   //   console.log(currentList);
   // }
+  console.log("Workspace Screen")
   let currentList = store.currentList;
   function handleAddNewSong() {
     store.addNewSong();

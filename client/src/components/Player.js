@@ -21,15 +21,23 @@ export default function Player() {
 
       currentList = store.currentList;
       if (currentSong != 0 && prevList != store.currentList) {
+        console.log("hello");
         setCurrentSong(0);
       }
-      if (currentSong == 0 && prevList != store.currentList)
+      if (currentSong == 0 && prevList != store.currentList) {
+        console.log("hello");
         setPrevList(store.currentList);
-      if (currentList.songs[currentSong] == undefined) {
+      }
+      if (
+        currentList != null &&
+        currentList.length > 0 &&
+        currentList.songs[currentSong] == undefined
+      ) {
+        console.log("hello");
         setCurrentSong(0);
       }
     }
-    console.log(playlist);
+    // console.log(playlist);
   };
   // THIS IS THE INDEX OF THE SONG CURRENTLY IN USE IN THE PLAYLIST
   // let currentSong = 0;
@@ -55,11 +63,17 @@ export default function Player() {
     // currentSong = currentSong + 1;
     // currentSong = currentSong % playlist.length;
     if (currentSong + 1 >= playlist.length) {
-    } else setCurrentSong((currentSong + 1) % playlist.length);
+    } else {
+      console.log("hello");
+      setCurrentSong((currentSong + 1) % playlist.length);
+    }
   }
   function decSong() {
     if (currentSong - 1 < 0) {
-    } else setCurrentSong((currentSong - 1) % playlist.length);
+    } else {
+      console.log("hello");
+      setCurrentSong((currentSong - 1) % playlist.length);
+    }
   }
 
   function handlePlay() {
@@ -80,6 +94,7 @@ export default function Player() {
   // VALUE OF 0 MEANS THE SONG PLAYING HAS ENDED.
   function onPlayerStateChange(event) {
     let playerStatus = event.data;
+    console.log("hello");
     setPlayer(event.target);
     // console.log(player.getPlayerState());
     if (playerStatus === -1) {

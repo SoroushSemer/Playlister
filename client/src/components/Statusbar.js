@@ -17,15 +17,32 @@ function Statusbar() {
   }
   return (
     <div id="top5-statusbar">
-      <Fab
-        color="primary"
-        aria-label="add"
-        id="add-list-button"
-        onClick={handleCreateNewList}
-      >
-        <AddIcon />
-      </Fab>
-      <Typography variant="h2">Your Lists</Typography>
+      {store.currentView == "HOME" ? (
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Fab
+            color="primary"
+            aria-label="add"
+            id="add-list-button"
+            onClick={handleCreateNewList}
+          >
+            <AddIcon />
+          </Fab>
+          <Typography variant="h2">Your Lists</Typography>
+        </div>
+      ) : store.currentView == "ALL" || store.searchText.length == 0 ? (
+        <Typography variant="h2">
+          {store.searchText.length > 0 ? store.searchText : "All"} Lists
+        </Typography>
+      ) : (
+        <Typography variant="h2">Lists by {store.searchText}</Typography>
+      )}
 
       {/* <Typography variant="h4">{text}</Typography> */}
     </div>

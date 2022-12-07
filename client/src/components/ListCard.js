@@ -26,7 +26,7 @@ function ListCard(props) {
   const [listOpen, setListOpen] = useState(false);
   const [text, setText] = useState("");
   //   const [list, setList] = useState({});
-
+  console.log("listcard");
   const { idNamePair, selected } = props;
 
   async function handleLoadList(event, id) {
@@ -156,21 +156,53 @@ function ListCard(props) {
           <div style={{ fontSize: "30pt" }}>{idNamePair.name}</div>
           <div style={{ fontSize: "20pt" }}>
             By:{" "}
-            <Link to="/">
+            <span
+              style={{
+                cursor: "pointer",
+                color: "blue",
+                textDecoration: "underline",
+              }}
+              onClick={(event) => {
+                event.stopPropagation();
+                store.searchUser(
+                  idNamePair.owner.firstName + " " + idNamePair.owner.lastName
+                );
+              }}
+            >
               {idNamePair.owner.firstName + " " + idNamePair.owner.lastName}
-            </Link>
+            </span>
           </div>
         </div>
         {idNamePair.published ? (
           <div>
             <IconButton>
-              <ThumbUpIcon style={{ fontSize: "48pt" }} />
+              <ThumbUpIcon
+                onClick={(event) => {
+                  event.stopPropagation();
+                  store.likeList(idNamePair._id);
+                }}
+                style={
+                  idNamePair.liked > 0
+                    ? { color: "#22f", fontSize: "48pt" }
+                    : { fontSize: "48pt", color: "#ddd" }
+                }
+              />
             </IconButton>
             <span style={{ fontStyle: "normal", fontSize: "30pt" }}>
               {idNamePair.likes}
             </span>
             <IconButton>
-              <ThumbDownIcon style={{ fontSize: "48pt", marginLeft: "2vh" }} />
+              <ThumbDownIcon
+                onClick={(event) => {
+                  event.stopPropagation();
+                  store.dislikeList(idNamePair._id);
+                }}
+                style={
+                  idNamePair.liked < 0
+                    ? { fontSize: "48pt", marginLeft: "2vh", color: "blue" }
+                    : { fontSize: "48pt", marginLeft: "2vh", color: "#ddd" }
+                }
+              />
             </IconButton>
             <span
               style={{

@@ -15,16 +15,35 @@ import SideBar from "./SideBar";
 */
 const HomeScreen = () => {
   const { store } = useContext(GlobalStoreContext);
-
+  console.log("HomeScreen");
   useEffect(() => {
     store.loadIdNamePairs();
   }, []);
 
+  //   if (store && !store.idNamePairs) {
+  //     store.loadIdNamePairs();
+  //   }
   let listCard = "";
-  if (store) {
+
+  console.log("SEARCHING " + store.currentView + ": " + store.searchText);
+  if (store && store.idNamePairs) {
+    let filteredList = store.idNamePairs;
+    if (store.searchText) {
+      console.log("SEARCHING" + store.searchText);
+      filteredList = store.idNamePairs.filter((idNamePair) =>
+        store.currentView == "HOME" || store.currentView == "ALL"
+          ? idNamePair.name
+              .toUpperCase()
+              .includes(store.searchText.toUpperCase())
+          : (idNamePair.owner.firstName + " " + idNamePair.owner.lastName)
+              .toUpperCase()
+              .includes(store.searchText.toUpperCase())
+      );
+    }
+    console.log(filteredList);
     listCard = (
       <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-        {store.idNamePairs.map((pair) => (
+        {filteredList.map((pair) => (
           <ListCard key={pair._id} idNamePair={pair} selected={false} />
         ))}
       </List>

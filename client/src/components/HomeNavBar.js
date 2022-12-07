@@ -23,6 +23,7 @@ export default function HomeNavBar() {
   const { auth } = useContext(AuthContext);
   const { store } = useContext(GlobalStoreContext);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [text, setText] = useState("");
   const isMenuOpen = Boolean(anchorEl);
 
   const handleMenuOpen = (event) => {
@@ -31,6 +32,17 @@ export default function HomeNavBar() {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+  const handleKeyPress = (event) => {
+    if (event.code === "Enter") {
+      console.log("Searching: " + text);
+      store.setSearchText(text);
+    }
+  };
+
+  const handleChange = (event) => {
+    setText(event.target.value);
+    console.log(text);
   };
 
   const menuId = "primary-search-account-menu";
@@ -102,14 +114,41 @@ export default function HomeNavBar() {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            <Button>
-              <HomeIcon style={{ fontSize: "6vh" }} />
+            <Button
+              style={
+                store.currentView == "HOME"
+                  ? { borderBottom: "5px solid blue" }
+                  : {}
+              }
+            >
+              <HomeIcon
+                onClick={() => store.setView("HOME")}
+                style={{ fontSize: "6vh" }}
+              />
             </Button>
-            <Button>
-              <GroupsIcon style={{ fontSize: "6vh" }} />
+            <Button
+              style={
+                store.currentView == "ALL"
+                  ? { borderBottom: "5px solid blue" }
+                  : {}
+              }
+            >
+              <GroupsIcon
+                onClick={() => store.setView("ALL")}
+                style={{ fontSize: "6vh" }}
+              />
             </Button>
-            <Button>
-              <PersonIcon style={{ fontSize: "6vh" }} />
+            <Button
+              style={
+                store.currentView == "USER"
+                  ? { borderBottom: "5px solid blue" }
+                  : {}
+              }
+            >
+              <PersonIcon
+                onClick={() => store.setView("USER")}
+                style={{ fontSize: "6vh" }}
+              />
             </Button>
           </Typography>
           <Box sx={{ flexGrow: 1 }}>
@@ -121,6 +160,9 @@ export default function HomeNavBar() {
                 fontSize: "5vh",
               }}
               placeholder="Search"
+              onKeyPress={handleKeyPress}
+              onChange={handleChange}
+              value={text}
             />
           </Box>
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
