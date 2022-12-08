@@ -36,7 +36,12 @@ export default function HomeNavBar() {
   const handleKeyPress = (event) => {
     if (event.code === "Enter") {
       console.log("Searching: " + text);
-      store.setSearchText(text);
+      if (text == "") {
+        store.setSearchText(null);
+      } else {
+        store.setSearchText(text);
+      }
+      setText("");
     }
   };
 

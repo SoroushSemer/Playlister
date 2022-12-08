@@ -2,7 +2,6 @@ import React, { createContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import api from "./auth-request-api";
 
-
 const AuthContext = createContext();
 // console.log("create AuthContext: " + AuthContext);
 
@@ -90,20 +89,22 @@ function AuthContextProvider(props) {
     firstName,
     lastName,
     email,
+    username,
     password,
     passwordVerify
   ) {
     async function asyncRegister() {
-      let response = await api.registerUser(firstName, lastName, email, password, passwordVerify)
+      let response = await api
+        .registerUser(firstName, lastName, email, username, password, passwordVerify)
         .then((response) => {
           if (response.data.success) {
-            authReducer({
-              type: AuthActionType.REGISTER_USER,
-              payload: {
-                user: response.data.user,
-              },
-            });
-            history.push("/");
+            // authReducer({
+            //   type: AuthActionType.REGISTER_USER,
+            //   payload: {
+            //     user: response.data.user,
+            //   },
+            // });
+            history.push("/login");
           }
         })
         .catch((error) => {

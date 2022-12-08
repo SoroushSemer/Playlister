@@ -35,6 +35,7 @@ export const registerUser = (
   firstName,
   lastName,
   email,
+  username,
   password,
   passwordVerify
 ) =>
@@ -42,6 +43,7 @@ export const registerUser = (
     firstName: firstName,
     lastName: lastName,
     email: email,
+    username: username,
     password: password,
     passwordVerify: passwordVerify,
   });

@@ -28,23 +28,33 @@ const HomeScreen = () => {
   console.log("SEARCHING " + store.currentView + ": " + store.searchText);
   if (store && store.idNamePairs) {
     let filteredList = store.idNamePairs;
-    if (store.searchText) {
+    if (store.searchText != null) {
       console.log("SEARCHING" + store.searchText);
       filteredList = store.idNamePairs.filter((idNamePair) =>
         store.currentView == "HOME" || store.currentView == "ALL"
           ? idNamePair.name
               .toUpperCase()
               .includes(store.searchText.toUpperCase())
-          : (idNamePair.owner.firstName + " " + idNamePair.owner.lastName)
+          : idNamePair.owner.username
               .toUpperCase()
               .includes(store.searchText.toUpperCase())
       );
+    } else {
+      filteredList = [];
     }
     console.log(filteredList);
+    // if(store.searchText==null){
+    //     filteredList = []
+    // }
     listCard = (
       <List sx={{ width: "100%", bgcolor: "background.paper" }}>
         {filteredList.map((pair, index) => (
-          <ListCard key={index} filteredIds = {filteredList} idNamePair={pair} selected={false} />
+          <ListCard
+            key={index}
+            filteredIds={filteredList}
+            idNamePair={pair}
+            selected={false}
+          />
         ))}
       </List>
     );

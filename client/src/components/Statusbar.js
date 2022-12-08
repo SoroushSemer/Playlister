@@ -36,9 +36,9 @@ function Statusbar() {
           </Fab>
           <Typography variant="h2">Your Lists</Typography>
         </div>
-      ) : store.currentView == "ALL" || store.searchText.length == 0 ? (
+      ) : store.currentView == "ALL" || (store.searchText &&store.searchText.length == 0) ? (
         <Typography variant="h2">
-          {store.searchText.length > 0 ? store.searchText : "All"} Lists
+          {store.searchText && store.searchText.length > 0 ? store.searchText : "All"} Lists
         </Typography>
       ) : (
         <Typography variant="h2">Lists by {store.searchText}</Typography>

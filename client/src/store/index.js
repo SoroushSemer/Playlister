@@ -89,6 +89,7 @@ function GlobalStoreContextProvider(props) {
     mylist: null,
     prevLogin: null,
     currentlyPlaying: null,
+    error: null,
   });
   const history = useHistory();
 
@@ -122,6 +123,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       // STOP EDITING THE CURRENT LIST
@@ -144,6 +146,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       // CREATE A NEW LIST
@@ -166,6 +169,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -182,12 +186,13 @@ function GlobalStoreContextProvider(props) {
           listMarkedForDeletion: null,
           currentSort: payload.sort,
           currentView: payload.view,
-          searchText: "",
+          searchText: payload.search,
           guestModal: store.guestModal,
           playingList: store.playingList,
           mylist: payload.mylist,
           prevLogin: auth.user,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       // PREPARE TO DELETE A LIST
@@ -210,6 +215,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       // UPDATE A LIST
@@ -232,6 +238,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       // UPDATE A LIST
@@ -254,6 +261,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       // START EDITING A LIST NAME
@@ -276,6 +284,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       //
@@ -298,6 +307,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       case GlobalStoreActionType.REMOVE_SONG: {
@@ -319,6 +329,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       case GlobalStoreActionType.HIDE_MODALS: {
@@ -340,6 +351,7 @@ function GlobalStoreContextProvider(props) {
           mylist: store.mylist,
           prevLogin: store.prevLogin,
           currentlyPlaying: store.currentlyPlaying,
+          error: store.error,
         });
       }
       case GlobalStoreActionType.SET_SORT: {
@@ -369,12 +381,19 @@ function GlobalStoreContextProvider(props) {
     }
   };
 
-  store.setCurrentlyPlaying = (index)=> {
+  store.setError = (x) => {
     setStore({
       ...store,
-      currentlyPlaying: index
+      error: x,
     });
-  }
+  };
+
+  store.setCurrentlyPlaying = (index) => {
+    setStore({
+      ...store,
+      currentlyPlaying: index,
+    });
+  };
 
   store.toggleGuestModal = () => {
     setStore({
@@ -473,6 +492,7 @@ function GlobalStoreContextProvider(props) {
           view: view,
           sort: sortType,
           mylist: sortedIdNamePairs,
+          search: view != store.currentView ? "" : store.searchText,
         },
       });
     } else {
@@ -483,6 +503,7 @@ function GlobalStoreContextProvider(props) {
           view: view,
           sort: sortType,
           mylist: store.mylist,
+          search: view != store.currentView ? "" : store.searchText,
         },
       });
     }
@@ -922,15 +943,15 @@ function GlobalStoreContextProvider(props) {
   };
   store.comment = function (comment) {
     async function asyncUpdateList() {
-      const response = await api.updatePlaylistById(store.currentList._id, {
+      const response = await api.updatePlaylistById(store.playingList._id, {
         newComment: {
           text: comment,
-          owner: auth.user.firstName + " " + auth.user.lastName,
+          owner: auth.user.username,
         },
       });
       if (response.data.success) {
         console.log("liked");
-        store.setCurrentList(store.currentList._id);
+        store.setPlayingList(store.playingList._id);
       }
     }
     asyncUpdateList();

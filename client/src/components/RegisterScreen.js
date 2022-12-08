@@ -24,6 +24,7 @@ export default function RegisterScreen() {
       formData.get("firstName"),
       formData.get("lastName"),
       formData.get("email"),
+      formData.get("username"),
       formData.get("password"),
       formData.get("passwordVerify")
     );
@@ -56,6 +57,28 @@ export default function RegisterScreen() {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="username"
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
+                  type="text"
+                />
+              </Grid>
+            <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  type="email"
+                />
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="fname"
@@ -77,17 +100,7 @@ export default function RegisterScreen() {
                   autoComplete="lname"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  type="email"
-                />
-              </Grid>
+              
               <Grid item xs={12}>
                 <TextField
                   required

@@ -14,7 +14,7 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import AuthContext from "../auth";
 
-import { Modal, Alert, Button, AlertTitle } from "@mui/material";
+import { Modal, Alert, Button, AlertTitle, Dialog } from "@mui/material";
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -29,7 +29,7 @@ function ListCard(props) {
   const [editActive, setEditActive] = useState(false);
   const [listOpen, setListOpen] = useState(false);
   const [text, setText] = useState("");
-  const [error, setError] = useState(false);
+  //   const [store.error, store.setError] = useState(null);
   //   const [list, setList] = useState({});
   console.log("listcard");
   const { idNamePair, selected } = props;
@@ -87,14 +87,30 @@ function ListCard(props) {
       let id = event.target.id.substring("list-".length);
       let allNames = store.idNamePairs.map((a) => a.name);
 
-      if (!allNames.includes(text) || idNamePair === text) {
-        store.changeListName(id, text);
+      console.log(idNamePair.name + " " + text);
+      if (idNamePair.name == text || text == "") {
+        toggleEdit();
+        return;
+      } else if (!allNames.includes(text)) {
+        async function changeName() {
+          store.changeListName(id, text);
+        }
+        changeName();
+        toggleEdit();
+        return;
       } else {
-        setError(true);
+        console.log("invalid name");
+        store.setError(true);
+        // console.log(store.error);
       }
-      toggleEdit();
     }
   }
+
+  const handleX = (event) => {
+    event.stopPropagation();
+    console.log("GOT X");
+    store.setError(false);
+  };
 
   function handleUpdateText(event) {
     setText(event.target.value);
@@ -157,6 +173,19 @@ function ListCard(props) {
           : () => {}
       }
     >
+      <Dialog open={store.error}>
+        <Alert
+          severity="error"
+          action={
+            <Button color="inherit" onClick={handleX}>
+              X
+            </Button>
+          }
+        >
+          <AlertTitle>Invalid Name for Playlist</AlertTitle>
+        </Alert>
+      </Dialog>
+
       {/* <Box sx={{ p: 1, flexGrow: 1 }}> */}
       <div
         style={{
@@ -177,12 +206,10 @@ function ListCard(props) {
               }}
               onClick={(event) => {
                 event.stopPropagation();
-                store.searchUser(
-                  idNamePair.owner.firstName + " " + idNamePair.owner.lastName
-                );
+                store.searchUser(idNamePair.owner.username);
               }}
             >
-              {idNamePair.owner.firstName + " " + idNamePair.owner.lastName}
+              {idNamePair.owner.username}
             </span>
           </div>
         </div>
@@ -314,24 +341,6 @@ function ListCard(props) {
           )}
         </div>
       </div>
-      <Modal open={error}>
-        <Alert
-          sx={{
-            position: "absolute",
-            top: "10%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-          severity="error"
-          action={
-            <Button color="inherit" onClick={() => setError(false)}>
-              X
-            </Button>
-          }
-        >
-          <AlertTitle>Invalid Name for Playlist</AlertTitle>
-        </Alert>
-      </Modal>
     </ListItem>
   );
 

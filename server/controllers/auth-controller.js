@@ -22,6 +22,7 @@ getLoggedIn = async (req, res) => {
         firstName: loggedInUser.firstName,
         lastName: loggedInUser.lastName,
         email: loggedInUser.email,
+        username: loggedInUser.username,
       },
     });
   } catch (err) {
@@ -78,6 +79,7 @@ loginUser = async (req, res) => {
           firstName: existingUser.firstName,
           lastName: existingUser.lastName,
           email: existingUser.email,
+          username: existingUser.username,
         },
       });
   } catch (err) {
@@ -99,7 +101,8 @@ logoutUser = async (req, res) => {
 
 registerUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, passwordVerify } = req.body;
+    const { firstName, lastName, email, username, password, passwordVerify } =
+      req.body;
     console.log(
       "create user: " +
         firstName +
@@ -108,11 +111,20 @@ registerUser = async (req, res) => {
         " " +
         email +
         " " +
+        username +
+        " " +
         password +
         " " +
         passwordVerify
     );
-    if (!firstName || !lastName || !email || !password || !passwordVerify) {
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !username ||
+      !password ||
+      !passwordVerify
+    ) {
       return res
         .status(400)
         .json({
@@ -144,7 +156,13 @@ registerUser = async (req, res) => {
         errorMessage: "An account with this email address already exists.",
       });
     }
-
+    const existingUser2 = await User.findOne({ username: username });
+    if (existingUser2) {
+      return res.status(400).json({
+        success: false,
+        errorMessage: "An account with this username already exists.",
+      });
+    }
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     const passwordHash = await bcrypt.hash(password, salt);
@@ -153,6 +171,7 @@ registerUser = async (req, res) => {
     const newUser = new User({
       firstName,
       lastName,
+      username,
       email,
       passwordHash,
     });
@@ -176,6 +195,7 @@ registerUser = async (req, res) => {
           firstName: savedUser.firstName,
           lastName: savedUser.lastName,
           email: savedUser.email,
+          username: savedUser.username,
         },
       });
 

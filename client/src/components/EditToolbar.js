@@ -16,16 +16,20 @@ import AuthContext from "../auth";
 function EditToolbar() {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
-  function handlePublish() {
+  function handlePublish(event) {
+    event.stopPropagation();
     store.publishList();
   }
-  function handleUndo() {
+  function handleUndo(event) {
+    event.stopPropagation();
     store.undo();
   }
-  function handleRedo() {
+  function handleRedo(event) {
+    event.stopPropagation();
     store.redo();
   }
-  function handleDuplicate() {
+  function handleDuplicate(event) {
+    event.stopPropagation();
     store.duplicateList();
   }
 
@@ -90,6 +94,7 @@ function EditToolbar() {
           <Button
             id="delete-button"
             onClick={(event) => {
+              event.stopPropagation();
               handleDeleteList(event, store.currentList._id);
             }}
             variant="contained"

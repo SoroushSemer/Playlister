@@ -12,6 +12,7 @@ export default function SideBar() {
   const { store } = useContext(GlobalStoreContext);
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    store.setPlayingList(store.playingList._id);
   };
 
   return (

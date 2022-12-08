@@ -287,6 +287,10 @@ updatePlaylist = async (req, res) => {
               }
             }
             if (body.playlist.newComment) {
+              console.log(
+                "\n\n\n\ncommenting: " +
+                  JSON.stringify(body.playlist.newComment)
+              );
               list.comments.push(body.playlist.newComment);
             }
           } else {
@@ -363,7 +367,10 @@ updatePlaylist = async (req, res) => {
                 }
               }
               if (body.playlist.newComment) {
-                console.log("got comment: ", body.playlist.newComment);
+                console.log(
+                  "\n\n\n\ngot comment: ",
+                  JSON.stringify(body.playlist.newComment)
+                );
                 list.comments.push(body.playlist.newComment);
               }
               if (body.playlist.listens) {
