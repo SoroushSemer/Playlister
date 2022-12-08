@@ -132,7 +132,8 @@ function ListCard(props) {
       }}
       onClick={
         store.playingList == null || store.playingList._id != idNamePair._id
-          ? () => {
+          ? (event) => {
+              event.stopPropagation();
               if (
                 store.playingList != null &&
                 store.playingList._id != idNamePair._id &&
@@ -142,7 +143,9 @@ function ListCard(props) {
               }
               store.setPlayingList(idNamePair._id);
             }
-          : () => {}
+          : (event) => {
+              event.stopPropagation();
+            }
       }
       onDoubleClick={
         store.currentList == null ||

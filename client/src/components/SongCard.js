@@ -7,24 +7,29 @@ function SongCard(props) {
   const { song, index } = props;
 
   function handleDragStart(event) {
+    event.stopPropagation();
     event.dataTransfer.setData("song", index);
   }
 
   function handleDragOver(event) {
+    event.stopPropagation();
     event.preventDefault();
   }
 
   function handleDragEnter(event) {
+    event.stopPropagation();
     event.preventDefault();
     setDraggedTo(true);
   }
 
   function handleDragLeave(event) {
+    event.stopPropagation();
     event.preventDefault();
     setDraggedTo(false);
   }
 
   function handleDrop(event) {
+    event.stopPropagation();
     event.preventDefault();
     let targetIndex = index;
     let sourceIndex = Number(event.dataTransfer.getData("song"));
@@ -34,14 +39,16 @@ function SongCard(props) {
     store.addMoveSongTransaction(sourceIndex, targetIndex);
   }
   function handleRemoveSong(event) {
+    event.stopPropagation();
     store.showRemoveSongModal(index, song);
   }
 
   function handleClick(event) {
+    event.stopPropagation();
     // DOUBLE CLICK IS FOR SONG EDITING
-    if (event.detail === 2) {
-      store.showEditSongModal(index, song);
-    }
+    // if (event.detail === 2) {
+    store.showEditSongModal(index, song);
+    // }
   }
 
   let cardClass = "list-card unselected-list-card";
@@ -56,8 +63,14 @@ function SongCard(props) {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       draggable="true"
-      onClick={handleClick}
-      style = {store.currentlyPlaying == index && store.playingList._id == store.currentList._id?{backgroundColor:'orange'}:{}}
+      onClick={() => store.setCurrentlyPlaying(index)}
+      onDoubleClick={handleClick}
+      style={
+        store.currentlyPlaying == index &&
+        store.playingList._id == store.currentList._id
+          ? { backgroundColor: "orange" }
+          : {}
+      }
     >
       {index + 1}.
       <a

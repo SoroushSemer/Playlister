@@ -29,17 +29,19 @@ function WorkspaceScreen(props) {
   // }
   console.log("Workspace Screen");
   let currentList = store.currentList;
-  function handleAddNewSong() {
+  function handleAddNewSong(event) {
+    event.stopPropagation();
     store.addNewSong();
   }
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "100%", marginTop: "1vh" }}>
       {currentList != null ? (
         <Box id="playlister-cards" style={{ maxHeight: "40vh" }}>
           <List
             sx={{
               width: "100%",
               bgcolor: "background.paper",
+              borderRadius: "1vh",
             }}
           >
             {store.currentList.published != true
@@ -55,7 +57,8 @@ function WorkspaceScreen(props) {
                   <ListItem
                     key={"playlist-song-" + index}
                     style={
-                      store.currentlyPlaying == index && store.playingList._id == store.currentList._id
+                      store.currentlyPlaying == index &&
+                      store.playingList._id == store.currentList._id
                         ? {
                             fontSize: "25pt",
                             backgroundColor: "orange",
