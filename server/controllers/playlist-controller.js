@@ -155,6 +155,8 @@ getPlaylistPairs = async (req, res) => {
                 publishDate: list.publishDate,
                 listens: list.listens,
                 liked: liked,
+                updatedAt: list.updatedAt,
+                createdAt: list.createdAt,
               };
               pairs.push(pair);
             }
@@ -195,6 +197,8 @@ getPlaylistPairs = async (req, res) => {
             publishDate: list.publishDate,
             listens: list.listens,
             liked: liked,
+            updatedAt: list.updatedAt,
+            createdAt: list.createdAt,
           };
           pairs.push(pair);
         }
@@ -245,8 +249,12 @@ updatePlaylist = async (req, res) => {
         if (user._id == req.userId) {
           console.log("correct user!");
           console.log("req.body.name: " + req.body.name);
-          if (body.playlist.like || body.playlist.dislike) {
-            console.log("got like");
+          if (
+            body.playlist.like ||
+            body.playlist.dislike ||
+            body.playlist.newComment
+          ) {
+            console.log("got like/dislike/comment");
             if (body.playlist.like) {
               if (list.likeUsers.includes(user._id)) {
                 list.likes -= 1;
@@ -278,16 +286,17 @@ updatePlaylist = async (req, res) => {
                 list.dislikeUsers.push(user._id);
               }
             }
+            if (body.playlist.newComment) {
+              list.comments.push(body.playlist.newComment);
+            }
           } else {
             list.name = body.playlist.name;
             list.songs = body.playlist.songs;
-            if (body.playlist.newComment != undefined) {
-              list.comments.append(newComment);
-            }
+
             if (body.playlist.published) {
               list.published = body.playlist.published;
               list.publishDate = body.playlist.publishDate;
-              list.comments = [];
+              // list.comments = [];
             }
 
             if (body.playlist.listens) {
@@ -311,76 +320,100 @@ updatePlaylist = async (req, res) => {
                 message: "Playlist not updated!",
               });
             });
-        } else {
-          console.log("incorrect user!");
-          if (
-            body.playlist.like ||
-            body.playlist.dislike ||
-            body.playlist.listens > list.listens
-          ) {
-            async function asyncUser() {
-              await User.findOne({ _id: req.userId }, (err, currentuser) => {
+        } else if (req.userId != "") {
+          console.log("not owner!");
+
+          async function asyncUser() {
+            await User.findOne({ _id: req.userId }, (err, currentuser) => {
+              if (body.playlist.like) {
                 console.log("got like");
-                if (body.playlist.like) {
-                  if (list.likeUsers.includes(currentuser._id)) {
-                    list.likes -= 1;
-                    list.likeUsers = list.likeUsers.filter(
-                      (x) => x == currentuser._id
-                    );
-                  } else {
-                    if (list.dislikeUsers.includes(currentuser._id)) {
-                      list.dislikes -= 1;
-                      list.dislikeUsers = list.dislikeUsers.filter(
-                        (x) => x == currentuser._id
-                      );
-                    }
-                    list.likes += 1;
-                    list.likeUsers.push(currentuser._id);
-                  }
-                  console.log(list);
-                }
-                if (body.playlist.dislike) {
+                if (list.likeUsers.includes(currentuser._id)) {
+                  list.likes -= 1;
+                  list.likeUsers = list.likeUsers.filter(
+                    (x) => x == currentuser._id
+                  );
+                } else {
                   if (list.dislikeUsers.includes(currentuser._id)) {
                     list.dislikes -= 1;
                     list.dislikeUsers = list.dislikeUsers.filter(
                       (x) => x == currentuser._id
                     );
-                  } else {
-                    if (list.likeUsers.includes(currentuser._id)) {
-                      list.likes -= 1;
-                      list.likeUsers = list.likeUsers.filter(
-                        (x) => x == currentuser._id
-                      );
-                    }
-                    list.dislikes += 1;
-                    list.dislikeUsers.push(currentuser._id);
                   }
+                  list.likes += 1;
+                  list.likeUsers.push(currentuser._id);
                 }
+                console.log(list);
+              }
+              if (body.playlist.dislike) {
+                console.log("got dislike");
+                if (list.dislikeUsers.includes(currentuser._id)) {
+                  list.dislikes -= 1;
+                  list.dislikeUsers = list.dislikeUsers.filter(
+                    (x) => x == currentuser._id
+                  );
+                } else {
+                  if (list.likeUsers.includes(currentuser._id)) {
+                    list.likes -= 1;
+                    list.likeUsers = list.likeUsers.filter(
+                      (x) => x == currentuser._id
+                    );
+                  }
+                  list.dislikes += 1;
+                  list.dislikeUsers.push(currentuser._id);
+                }
+              }
+              if (body.playlist.newComment) {
+                console.log("got comment: ", body.playlist.newComment);
+                list.comments.push(body.playlist.newComment);
+              }
+              if (body.playlist.listens) {
                 list.listens = body.playlist.listens;
-                list
-                  .save()
-                  .then(() => {
-                    console.log("SUCCESS!!!");
-                    return res.status(200).json({
-                      success: true,
-                      id: list._id,
-                      message: "Playlist updated!",
-                    });
-                  })
-                  .catch((error) => {
-                    console.log("FAILURE: " + JSON.stringify(error));
-                    return res.status(404).json({
-                      error,
-                      message: "Playlist not updated!",
-                    });
+              }
+              list
+                .save()
+                .then(() => {
+                  console.log("SUCCESS!!!");
+                  return res.status(200).json({
+                    success: true,
+                    id: list._id,
+                    message: "Playlist updated!",
                   });
-              });
-            }
-            asyncUser();
+                })
+                .catch((error) => {
+                  console.log("FAILURE: " + JSON.stringify(error));
+                  return res.status(404).json({
+                    error,
+                    message: "Playlist not updated!",
+                  });
+                });
+            });
           }
+          asyncUser();
+
           // return res
           //   .status(400)
           //   .json({ success: false, description: "authentication error" });
+        } else {
+          if (body.playlist.listens) {
+            list.listens = body.playlist.listens;
+          }
+          list
+            .save()
+            .then(() => {
+              console.log("SUCCESS!!!");
+              return res.status(200).json({
+                success: true,
+                id: list._id,
+                message: "Playlist updated!",
+              });
+            })
+            .catch((error) => {
+              console.log("FAILURE: " + JSON.stringify(error));
+              return res.status(404).json({
+                error,
+                message: "Playlist not updated!",
+              });
+            });
         }
       });
     }

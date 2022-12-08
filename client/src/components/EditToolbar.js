@@ -5,6 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RedoIcon from "@mui/icons-material/Redo";
 import UndoIcon from "@mui/icons-material/Undo";
 import CloseIcon from "@mui/icons-material/HighlightOff";
+import AuthContext from "../auth";
 
 /*
     This toolbar is a functional React component that
@@ -14,7 +15,7 @@ import CloseIcon from "@mui/icons-material/HighlightOff";
 */
 function EditToolbar() {
   const { store } = useContext(GlobalStoreContext);
-
+  const { auth } = useContext(AuthContext);
   function handlePublish() {
     store.publishList();
   }
@@ -70,6 +71,7 @@ function EditToolbar() {
       ) : (
         <div></div>
       )}
+
       <div>
         {store.currentList.published != true ? (
           <Button
@@ -84,25 +86,33 @@ function EditToolbar() {
         ) : (
           <></>
         )}
-        <Button
-          id="delete-button"
-          onClick={(event) => {
-            handleDeleteList(event, store.currentList._id);
-          }}
-          variant="contained"
-          style={{ marginRight: "5px" }}
-          size="large"
-        >
-          Delete
-        </Button>
-        <Button
-          id="duplicate-button"
-          onClick={handleDuplicate}
-          variant="contained"
-          size="large"
-        >
-          Duplicate
-        </Button>
+        {auth.user && auth.user.email == store.currentList.ownerEmail ? (
+          <Button
+            id="delete-button"
+            onClick={(event) => {
+              handleDeleteList(event, store.currentList._id);
+            }}
+            variant="contained"
+            style={{ marginRight: "5px" }}
+            size="large"
+          >
+            Delete
+          </Button>
+        ) : (
+          <></>
+        )}
+        {auth.user ? (
+          <Button
+            id="duplicate-button"
+            onClick={handleDuplicate}
+            variant="contained"
+            size="large"
+          >
+            Duplicate
+          </Button>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

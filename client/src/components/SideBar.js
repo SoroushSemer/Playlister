@@ -5,32 +5,45 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Player from "./Player";
-
+import Comments from "./Comments";
+import GlobalStoreContext from "../store";
 export default function SideBar() {
   const [value, setValue] = useState(false);
-
+  const { store } = useContext(GlobalStoreContext);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        textColor="secondary"
-        indicatorColor="secondary"
-        aria-label="secondary tabs example"
+    <div sx={{ width: "100%", height: "100%" }}>
+      {store && store.playingList ? (
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          textColor="secondary"
+          indicatorColor="secondary"
+          aria-label="secondary tabs example"
+        >
+          <Tab value={false} label="Player" />
+          {store.playingList.published ? (
+            <Tab value={true} label="Comments" />
+          ) : (
+            <></>
+          )}
+        </Tabs>
+      ) : (
+        <h1 style={{ paddingLeft: "1vw" }}>No Selected List Currently</h1>
+      )}
+      <div
+        style={
+          value ? { display: "block", height: "100%" } : { display: "none" }
+        }
       >
-        <Tab value={false} label="Player" />
-        <Tab value={true} label="Comments" />
-      </Tabs>
-      <div style={value ? { display: "inline" } : { display: "none" }}>
-        comments
+        <Comments />
       </div>
       <div style={value ? { display: "none" } : { display: "inline" }}>
         <Player />
       </div>
-    </Box>
+    </div>
   );
 }

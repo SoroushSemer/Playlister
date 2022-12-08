@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import api from "./auth-request-api";
 
+
 const AuthContext = createContext();
 // console.log("create AuthContext: " + AuthContext);
 
@@ -56,6 +57,7 @@ function AuthContextProvider(props) {
           error: null,
         });
       }
+
       default:
         return auth;
     }
@@ -74,6 +76,16 @@ function AuthContextProvider(props) {
     }
   };
 
+  auth.guestLogin = async function () {
+    console.log("guest");
+    authReducer({
+      type: AuthActionType.LOGIN_USER,
+      payload: {
+        user: null,
+      },
+    });
+  };
+
   auth.registerUser = function (
     firstName,
     lastName,
@@ -82,8 +94,7 @@ function AuthContextProvider(props) {
     passwordVerify
   ) {
     async function asyncRegister() {
-      let response = await api
-        .registerUser(firstName, lastName, email, password, passwordVerify)
+      let response = await api.registerUser(firstName, lastName, email, password, passwordVerify)
         .then((response) => {
           if (response.data.success) {
             authReducer({

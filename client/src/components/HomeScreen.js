@@ -43,8 +43,8 @@ const HomeScreen = () => {
     console.log(filteredList);
     listCard = (
       <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-        {filteredList.map((pair) => (
-          <ListCard key={pair._id} idNamePair={pair} selected={false} />
+        {filteredList.map((pair, index) => (
+          <ListCard key={index} filteredIds = {filteredList} idNamePair={pair} selected={false} />
         ))}
       </List>
     );

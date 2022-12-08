@@ -1,8 +1,11 @@
 import PlayIcon from "@mui/icons-material/PlayCircleFilled";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
-
+import AuthContext from "../auth";
+import { useContext } from "react";
 export default function SplashScreen(props) {
+  const { auth } = useContext(AuthContext);
+
   return (
     <div id="splash-screen">
       Welcome to <img src="/logo.png"></img>
@@ -29,7 +32,9 @@ export default function SplashScreen(props) {
             Login
           </Button>
         </Link>
-        <Button id="guest-link">Continue as Guest</Button>
+        <Button id="guest-link" onClick={auth.guestLogin}>
+          Continue as Guest
+        </Button>
         <div id="built-by">Built By Soroush</div>
       </div>
     </div>

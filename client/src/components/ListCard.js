@@ -12,6 +12,9 @@ import WorkspaceScreen from "./WorkspaceScreen";
 import EditToolbar from "./EditToolbar";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import AuthContext from "../auth";
+
+import { Modal, Alert, Button, AlertTitle } from "@mui/material";
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -22,9 +25,11 @@ import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 */
 function ListCard(props) {
   const { store } = useContext(GlobalStoreContext);
+  const { auth } = useContext(AuthContext);
   const [editActive, setEditActive] = useState(false);
   const [listOpen, setListOpen] = useState(false);
   const [text, setText] = useState("");
+  const [error, setError] = useState(false);
   //   const [list, setList] = useState({});
   console.log("listcard");
   const { idNamePair, selected } = props;
@@ -80,10 +85,17 @@ function ListCard(props) {
   function handleKeyPress(event) {
     if (event.code === "Enter") {
       let id = event.target.id.substring("list-".length);
-      store.changeListName(id, text);
+      let allNames = store.idNamePairs.map((a) => a.name);
+
+      if (!allNames.includes(text) || idNamePair === text) {
+        store.changeListName(id, text);
+      } else {
+        setError(true);
+      }
       toggleEdit();
     }
   }
+
   function handleUpdateText(event) {
     setText(event.target.value);
   }
@@ -98,7 +110,7 @@ function ListCard(props) {
   }
   let cardColor = "#fff";
   if (idNamePair.published) cardColor = "#aaf";
-  if (store.currentList != null && store.currentList._id == idNamePair._id) {
+  if (store.playingList != null && store.playingList._id == idNamePair._id) {
     cardColor = "#dd0";
   }
   let cardElement = (
@@ -119,18 +131,16 @@ function ListCard(props) {
         backgroundColor: cardColor,
       }}
       onClick={
-        store.currentList == null ||
-        !listOpen ||
-        store.currentList._id != idNamePair._id
+        store.playingList == null || store.playingList._id != idNamePair._id
           ? () => {
               if (
-                store.currentList != null &&
-                store.currentList._id != idNamePair._id &&
+                store.playingList != null &&
+                store.playingList._id != idNamePair._id &&
                 idNamePair.published
               ) {
                 idNamePair.listens += 1;
               }
-              store.setCurrentList(idNamePair._id);
+              store.setPlayingList(idNamePair._id);
             }
           : () => {}
       }
@@ -175,12 +185,14 @@ function ListCard(props) {
         </div>
         {idNamePair.published ? (
           <div>
-            <IconButton>
+            <IconButton
+              disabled={auth.user == null}
+              onClick={(event) => {
+                event.stopPropagation();
+                store.likeList(idNamePair._id);
+              }}
+            >
               <ThumbUpIcon
-                onClick={(event) => {
-                  event.stopPropagation();
-                  store.likeList(idNamePair._id);
-                }}
                 style={
                   idNamePair.liked > 0
                     ? { color: "#22f", fontSize: "48pt" }
@@ -191,12 +203,14 @@ function ListCard(props) {
             <span style={{ fontStyle: "normal", fontSize: "30pt" }}>
               {idNamePair.likes}
             </span>
-            <IconButton>
+            <IconButton
+              disabled={auth.user == null}
+              onClick={(event) => {
+                event.stopPropagation();
+                store.dislikeList(idNamePair._id);
+              }}
+            >
               <ThumbDownIcon
-                onClick={(event) => {
-                  event.stopPropagation();
-                  store.dislikeList(idNamePair._id);
-                }}
                 style={
                   idNamePair.liked < 0
                     ? { fontSize: "48pt", marginLeft: "2vh", color: "blue" }
@@ -297,6 +311,24 @@ function ListCard(props) {
           )}
         </div>
       </div>
+      <Modal open={error}>
+        <Alert
+          sx={{
+            position: "absolute",
+            top: "10%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+          severity="error"
+          action={
+            <Button color="inherit" onClick={() => setError(false)}>
+              X
+            </Button>
+          }
+        >
+          <AlertTitle>Invalid Name for Playlist</AlertTitle>
+        </Alert>
+      </Modal>
     </ListItem>
   );
 

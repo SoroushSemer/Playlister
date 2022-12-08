@@ -21,7 +21,7 @@ const playlistSchema = new Schema(
     likeUsers: { type: Array },
     dislikeUsers: { type: Array },
     listens: { type: Number },
-    comments: { type: Array },
+    comments: { type: [{text: String, owner: String}] },
     songs: {
       type: [
         {

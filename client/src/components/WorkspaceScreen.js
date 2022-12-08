@@ -27,7 +27,7 @@ function WorkspaceScreen(props) {
   // } else {
   //   console.log(currentList);
   // }
-  console.log("Workspace Screen")
+  console.log("Workspace Screen");
   let currentList = store.currentList;
   function handleAddNewSong() {
     store.addNewSong();
@@ -54,9 +54,16 @@ function WorkspaceScreen(props) {
               : currentList.songs.map((song, index) => (
                   <ListItem
                     key={"playlist-song-" + index}
-                    style={{
-                      fontSize: "25pt",
-                    }}
+                    style={
+                      store.currentlyPlaying == index && store.playingList._id == store.currentList._id
+                        ? {
+                            fontSize: "25pt",
+                            backgroundColor: "orange",
+                          }
+                        : {
+                            fontSize: "25pt",
+                          }
+                    }
                   >
                     {index + 1}. {song.title} by {song.artist}
                   </ListItem>

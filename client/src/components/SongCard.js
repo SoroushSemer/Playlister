@@ -57,7 +57,7 @@ function SongCard(props) {
       onDrop={handleDrop}
       draggable="true"
       onClick={handleClick}
-
+      style = {store.currentlyPlaying == index && store.playingList._id == store.currentList._id?{backgroundColor:'orange'}:{}}
     >
       {index + 1}.
       <a

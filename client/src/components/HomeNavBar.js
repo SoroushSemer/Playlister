@@ -47,59 +47,100 @@ export default function HomeNavBar() {
 
   const menuId = "primary-search-account-menu";
 
-  const SortByMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      // anchorOrigin={
-      //   {
-      //     // vertical: "top",
-      //     // horizontal: "right",
-      //   }
-      // }
-      id={menuId}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem
-        onClick={() => store.setSort("NAME")}
-        style={store.currentSort == "NAME" ? { backgroundColor: "gray" } : {}}
+  const SortByMenu =
+    store.currentView == "HOME" ? (
+      <Menu
+        anchorEl={anchorEl}
+        // anchorOrigin={
+        //   {
+        //     // vertical: "top",
+        //     // horizontal: "right",
+        //   }
+        // }
+        id={menuId}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        open={isMenuOpen}
+        onClose={handleMenuClose}
       >
-        Name (A-Z)
-      </MenuItem>
-      <MenuItem
-        onClick={() => store.setSort("DATE")}
-        style={store.currentSort == "DATE" ? { backgroundColor: "gray" } : {}}
+        <MenuItem
+          onClick={() => store.setSort("NAME")}
+          style={store.currentSort == "NAME" ? { backgroundColor: "gray" } : {}}
+        >
+          Name (A-Z)
+        </MenuItem>
+        <MenuItem
+          onClick={() => store.setSort("CREATE")}
+          style={
+            store.currentSort == "CREATE" ? { backgroundColor: "gray" } : {}
+          }
+        >
+          Creation Date (Old - New)
+        </MenuItem>
+        <MenuItem
+          onClick={() => store.setSort("EDIT")}
+          style={store.currentSort == "EDIT" ? { backgroundColor: "gray" } : {}}
+        >
+          Last Edit Date (New - Old)
+        </MenuItem>
+      </Menu>
+    ) : (
+      <Menu
+        anchorEl={anchorEl}
+        // anchorOrigin={
+        //   {
+        //     // vertical: "top",
+        //     // horizontal: "right",
+        //   }
+        // }
+        id={menuId}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        open={isMenuOpen}
+        onClose={handleMenuClose}
       >
-        Publish Date (Newest)
-      </MenuItem>
-      <MenuItem
-        onClick={() => store.setSort("LISTENS")}
-        style={
-          store.currentSort == "LISTENS" ? { backgroundColor: "gray" } : {}
-        }
-      >
-        Listens (High - Low)
-      </MenuItem>
-      <MenuItem
-        onClick={() => store.setSort("LIKES")}
-        style={store.currentSort == "LIKES" ? { backgroundColor: "gray" } : {}}
-      >
-        Likes (High - Low)
-      </MenuItem>
-      <MenuItem
-        onClick={() => store.setSort("DISLIKES")}
-        style={
-          store.currentSort == "DISLIKES" ? { backgroundColor: "gray" } : {}
-        }
-      >
-        Dislikes (High - Low)
-      </MenuItem>
-    </Menu>
-  );
+        <MenuItem
+          onClick={() => store.setSort("NAME")}
+          style={store.currentSort == "NAME" ? { backgroundColor: "gray" } : {}}
+        >
+          Name (A-Z)
+        </MenuItem>
+        <MenuItem
+          onClick={() => store.setSort("DATE")}
+          style={store.currentSort == "DATE" ? { backgroundColor: "gray" } : {}}
+        >
+          Publish Date (Newest)
+        </MenuItem>
+        <MenuItem
+          onClick={() => store.setSort("LISTENS")}
+          style={
+            store.currentSort == "LISTENS" ? { backgroundColor: "gray" } : {}
+          }
+        >
+          Listens (High - Low)
+        </MenuItem>
+        <MenuItem
+          onClick={() => store.setSort("LIKES")}
+          style={
+            store.currentSort == "LIKES" ? { backgroundColor: "gray" } : {}
+          }
+        >
+          Likes (High - Low)
+        </MenuItem>
+        <MenuItem
+          onClick={() => store.setSort("DISLIKES")}
+          style={
+            store.currentSort == "DISLIKES" ? { backgroundColor: "gray" } : {}
+          }
+        >
+          Dislikes (High - Low)
+        </MenuItem>
+      </Menu>
+    );
 
   let editToolbar = "";
   let menu = SortByMenu;
@@ -120,6 +161,7 @@ export default function HomeNavBar() {
                   ? { borderBottom: "5px solid blue" }
                   : {}
               }
+              disabled={auth.user == null}
             >
               <HomeIcon
                 onClick={() => store.setView("HOME")}

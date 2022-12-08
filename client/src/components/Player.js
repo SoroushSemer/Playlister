@@ -9,32 +9,32 @@ import FastRewindIcon from "@mui/icons-material/FastRewind";
 
 export default function Player() {
   const { store } = useContext(GlobalStoreContext);
-  const [currentSong, setCurrentSong] = useState(0);
+  // const [currentSong, setCurrentSong] = useState(0);
   const [prevList, setPrevList] = useState(null);
   const [player, setPlayer] = useState(null);
   const [play, setPlay] = useState(false);
   let playlist = [];
   let currentList = null;
   const getPlaylist = () => {
-    if (store.currentList != null) {
-      playlist = store.currentList.songs.map((song) => song.youTubeId);
+    if (store.playingList && store.playingList.songs) {
+      playlist = store.playingList.songs.map((song) => song.youTubeId);
 
-      currentList = store.currentList;
-      if (currentSong != 0 && prevList != store.currentList) {
+      currentList = store.playingList;
+      if (store.currentlyPlaying != 0 && prevList != store.playingList) {
         console.log("hello");
-        setCurrentSong(0);
+        store.setCurrentlyPlaying(0);
       }
-      if (currentSong == 0 && prevList != store.currentList) {
+      if (store.currentlyPlaying == 0 && prevList != store.playingList) {
         console.log("hello");
-        setPrevList(store.currentList);
+        setPrevList(store.playingList);
       }
       if (
         currentList != null &&
         currentList.length > 0 &&
-        currentList.songs[currentSong] == undefined
+        currentList.songs[store.currentlyPlaying] == undefined
       ) {
         console.log("hello");
-        setCurrentSong(0);
+        store.setCurrentlyPlaying(0);
       }
     }
     // console.log(playlist);
@@ -42,8 +42,8 @@ export default function Player() {
   // THIS IS THE INDEX OF THE SONG CURRENTLY IN USE IN THE PLAYLIST
   // let currentSong = 0;
   const playerOptions = {
-    height: "390",
-    width: "640",
+    height: "400vh",
+    width: "100%",
     playerVars: {
       // https://developers.google.com/youtube/player_parameters
       autoplay: 0,
@@ -53,7 +53,7 @@ export default function Player() {
   // THIS FUNCTION LOADS THE CURRENT SONG INTO
   // THE PLAYER AND PLAYS IT
   function loadAndPlayCurrentSong(player) {
-    let song = playlist[currentSong];
+    let song = playlist[store.currentlyPlaying];
     player.loadVideoById(song);
     player.playVideo();
   }
@@ -62,17 +62,17 @@ export default function Player() {
   function incSong() {
     // currentSong = currentSong + 1;
     // currentSong = currentSong % playlist.length;
-    if (currentSong + 1 >= playlist.length) {
+    if (store.currentlyPlaying + 1 >= playlist.length) {
     } else {
       console.log("hello");
-      setCurrentSong((currentSong + 1) % playlist.length);
+      store.setCurrentlyPlaying((store.currentlyPlaying + 1) % playlist.length);
     }
   }
   function decSong() {
-    if (currentSong - 1 < 0) {
+    if (store.currentlyPlaying - 1 < 0) {
     } else {
       console.log("hello");
-      setCurrentSong((currentSong - 1) % playlist.length);
+      store.setCurrentlyPlaying((store.currentlyPlaying - 1) % playlist.length);
     }
   }
 
@@ -129,40 +129,58 @@ export default function Player() {
     <div>
       {currentList != null &&
       currentList.songs.length > 0 &&
-      currentList.songs[currentSong] != undefined ? (
-        <div style={{ fontSize: "24pt" }}>
+      currentList.songs[store.currentlyPlaying] != undefined ? (
+        <div>
           <YouTube
-            videoId={playlist[currentSong]}
+            videoId={playlist[store.currentlyPlaying]}
             opts={playerOptions}
             onReady={onPlayerReady}
             onStateChange={onPlayerStateChange}
-          />
-          <div>Playlist: {currentList.name}</div>
-          <div>Song # {currentSong + 1} </div>
-          <div>Title: {currentList.songs[currentSong].title}</div>
-          <div>Artist: {currentList.songs[currentSong].artist} </div>
-          <ButtonGroup
-            variant="contained"
-            size="large"
-            aria-label="outlined primary button group"
             style={{ display: "flex", justifyContent: "center" }}
-          >
-            <Button onClick={decSong} disabled={currentSong - 1 < 0}>
-              <FastRewindIcon />
-            </Button>
-            <Button onClick={handlePlay} disabled={!play}>
-              <PlayArrowIcon />
-            </Button>
-            <Button onClick={handlePause} disabled={play}>
-              <PauseIcon />
-            </Button>
-            <Button
-              onClick={incSong}
-              disabled={currentSong + 1 >= playlist.length}
+          />
+          <div>
+            <div
+              style={{
+                fontSize: "24pt",
+                lineHeight: "1.2",
+                paddingLeft: "1vw",
+              }}
             >
-              <FastForwardIcon />
-            </Button>
-          </ButtonGroup>
+              <div>Playlist: {currentList.name}</div>
+              <div>Song # {store.currentlyPlaying + 1} </div>
+              <div>Title: {currentList.songs[store.currentlyPlaying].title}</div>
+              <div>Artist: {currentList.songs[store.currentlyPlaying].artist} </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                paddingTop: "3vh",
+              }}
+            >
+              <ButtonGroup
+                variant="contained"
+                size="large"
+                aria-label="outlined primary button group"
+              >
+                <Button onClick={decSong} disabled={store.currentlyPlaying - 1 < 0}>
+                  <FastRewindIcon />
+                </Button>
+                <Button onClick={handlePlay} disabled={!play}>
+                  <PlayArrowIcon />
+                </Button>
+                <Button onClick={handlePause} disabled={play}>
+                  <PauseIcon />
+                </Button>
+                <Button
+                  onClick={incSong}
+                  disabled={store.currentlyPlaying + 1 >= playlist.length}
+                >
+                  <FastForwardIcon />
+                </Button>
+              </ButtonGroup>
+            </div>
+          </div>
         </div>
       ) : (
         <></>
